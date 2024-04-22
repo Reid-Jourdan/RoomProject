@@ -12,7 +12,7 @@ class Room:
         self.image = image
         self.exits = {}
         self.items = {}
-        self.grabbables = []
+        self.grabbables = {}
 
     #name
     @property
@@ -77,8 +77,8 @@ class Room:
     def addItem(self, item, desc):
         self.items[item] = desc
 
-    def addGrabbable(self, item):
-        self.grabbables.append(item)
+    def addGrabbable(self, item, desc):
+        self.grabbables[item] = desc
 
     def delGrabbable(self, item):
         self.grabbables.remove(item)
@@ -139,19 +139,19 @@ class Game(Frame):
         r4.addExit("south", None)  # Death exit
 
         # Add items and grabbables to each room
-        r1.addGrabbable("key")
+        r1.addGrabbable("key", "has a golden shine")
         r1.addItem("chair", "It is made of wicker and no one is sitting on it.")
         r1.addItem("table", "It is made of oak. A golden key rests on it.")
 
         r2.addItem("rug", "It is nice and Indian. It also needs to be vacuumed.")
         r2.addItem("fireplace", "It is full of ashes.")
 
-        r3.addGrabbable("book")
+        r3.addGrabbable("book", "its about coding")
         r3.addItem("bookshelves", "They are empty. Go figure.")
         r3.addItem("statue", "There is nothing special about it.")
         r3.addItem("desk", "The statue is resting on it. So is a book.")
 
-        r4.addGrabbable("6-pack")
+        r4.addGrabbable("6-pack0", "Their coke, i swear")
         r4.addItem("brew_rig", "Gourd is brewing some sort of oatmeal stout on the brew rig. A 6-pack is resting beside it.")
 
         # Set initial room
@@ -205,38 +205,44 @@ class Game(Frame):
         action = action.lower()
         words = action.split()
 
+        status = ""
+
         if len(words) > 0:
             if words[0] == "go":
                 if len(words) > 1:
                     Game.currentRoom = Game.currentRoom.exits[words[1]]
                     self.setRoomImage()
-                    self.setStatus("")
+                    status = str(Game.currentRoom)
 
                 else:
-                    self.setStatus("Go where?").__annotations__
+                    status = "Go where?"
             elif words[0] == "look":
                 if len(words) > 1:
                     if words[1] in Game.currentRoom.items:
-                        self.setStatus(Game.currentRoom.items[words[1]])
+                        status = Game.currentRoom.items[words[1]]
+                    elif words[1] in Game.inventory:
+                        status = Game.inventory[words[1]]
                     else:
-                        self.setStatus("I don't see that item.")
+                        status = "I don't see that item."
                 else:
-                    self.setStatus(Game.currentRoom)
+                    status = str(Game.currentRoom)
 
             elif words[0] == "take":
                 if len(words) > 1:
                     if words[1] in Game.currentRoom.grabbables:
                         Game.inventory.append(words[1])
                         Game.currentRoom.delGrabbable(words[1])
-                        self.setStatus("Item taken.")
+                        status = "Item taken."
                     else:
-                        self.setStatus("I don't see that item.")
+                        status = "I don't see that item."
                 else:
-                    self.setStatus("Take what?")
+                    status = "Take what?"
 
             else:
-                self.setStatus("Invalid command.")
+                status = "Invalid command."
 
+        status += f"\nInventory: {str(Game.inventory)}"
+        self.setStatus(status)
         self.player_input.delete(0, END)
 
 # Main code
