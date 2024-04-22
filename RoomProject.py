@@ -14,6 +14,62 @@ class Room:
         self.items = {}
         self.grabbables = []
 
+    #name
+    @property
+    def name(self):
+        return self._name
+    @name.setter
+    def name(self, name):
+        self._name = name
+
+    #room desciption
+    @property
+    def description(self):
+        return self._description
+    @description.setter
+    def description(self, newDecription):
+        self._description = newDecription
+    
+    #exits
+    @property
+    def exits(self):
+        return self._exits
+    @exits.setter
+    def exits(self, exits):
+        self._exits = exits
+    
+    #exit locations
+    @property
+    def exitLocations(self):
+        return self._exitLocations
+    @exitLocations.setter
+    def exitLocations(self, newName):
+        self._exitLocations = newName
+    
+    #items
+    @property
+    def items(self):
+        return self._items
+    @items.setter
+    def items(self, items):
+        self._items = items
+    
+    #item desciptions
+    @property
+    def itemDescriptions(self):
+        return self._itemDescriptions
+    @itemDescriptions.setter
+    def itemDescriptions(self, itemDescriptions):
+        self._itemDescriptions = itemDescriptions
+    
+    #grabbables
+    @property
+    def grabbables(self):
+        return self._grabbables
+    @grabbables.setter
+    def grabbables(self, grabbables):
+        self._grabbables = grabbables
+
     # Getters and setters for instance variables
     def addExit(self, exit, room):
         self.exits[exit] = room
@@ -53,7 +109,7 @@ class Game(Frame):
 
         self.image = Label(self, width=self.WIDTH // 2)
         self.image.pack(side=LEFT, fill=Y)
-        self.image.pack_propagate(False)
+        # self.image.pack_propagate(False)
 
         text_frame = Frame(self, width=self.WIDTH // 2)
         self.text = Text(text_frame, bg="lightgrey", state=DISABLED)
@@ -127,6 +183,7 @@ class Game(Frame):
         if Game.currentRoom is None:
             img = PhotoImage(file="skull.gif")
         else:
+            # img = PhotoImage(file="skull.gif")
             img = PhotoImage(file=Game.currentRoom.image)
         self.image.config(image=img)
         self.image.image = img
@@ -139,7 +196,7 @@ class Game(Frame):
 
     def play(self):
         self.createRooms()
-        self.setupGUI()
+        # self.setupGUI()
         self.setRoomImage()
         self.setStatus("")
 
