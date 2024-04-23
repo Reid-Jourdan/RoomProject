@@ -84,7 +84,7 @@ class Room:
         self.grabbables[item] = desc
 
     def delGrabbable(self, item):
-        self.grabbables.remove(item)
+        del self.grabbables[item]
 
     def __str__(self):
         s = "You are in {}.\n".format(self.name)
@@ -145,30 +145,28 @@ class Game(Frame):
         # Add items and grabbables to each room
         r1.addGrabbable("key", "has a golden shine")
         r1.addItem("chair", "It is made of wicker and no one is sitting on it.")
-        r1.addItem("table", "It is made of oak. A golden key rests on it.")
-        r1.addItem("bad-code_snippet", "The only weapon that can damage a professional coder, I wonder why it's sitting here?")
-        r1.addGrabbable("bad-code_snippet")
+        r1.addItem("table", "It is made of oak. A golden key rests on it. There is a piece of code on it")
+        r1.addGrabbable("bad-code_snippet", "The only weapon that can damage a professional coder")
 
         r2.addItem("rug", "It is nice and Indian. It also needs to be vacuumed.")
         r2.addItem("fireplace", "It is full of ashes.")
 
         r3.addGrabbable("book", "its about coding")
         r3.addItem("bookshelves", "They are empty. Go figure.")
-        r3.addItem("statue", "There is nothing special about it.")
+        r3.addItem("statue", "There is nothing special about it. A shield is leaning against it")
         r3.addItem("desk", "The statue is resting on it. So is a book.")
-        r3.addGrabbable("shield")
-        r3.addItem("shield", "A shield that allows its wielder to block some shots")
+        r3.addGrabbable("shield", "A shield that allows its wielder to block some shots")
 
         r4.addGrabbable("6-pack0", "Their coke, i swear")
         r4.addItem("brew_rig", "Gourd is brewing some sort of oatmeal stout on the brew rig. A 6-pack is resting beside it.")
 
-        r5.addItem("MR. BOWMAN", "The immaculate Computer Science teacher that won't let you pass without a fight!")
+        r5.addItem("MR. BOWMAN", "The immaculate Computer Science professor that won't let you pass without a fight!")
 
         # Set initial room
         Game.currentRoom = r1
 
         # Initialize player's inventory
-        Game.inventory = []
+        Game.inventory = {}
 
     def setupGUI(self):
         self.pack(fill=BOTH, expand=1)
@@ -240,9 +238,11 @@ class Game(Frame):
             elif words[0] == "take":
                 if len(words) > 1:
                     if words[1] in Game.currentRoom.grabbables:
-                        Game.inventory.append(words[1])
+                        grab = words[1]
+                        Game.inventory.update({grab : Game.currentRoom.grabbables[grab]})
                         Game.currentRoom.delGrabbable(words[1])
                         status = "Item taken."
+
                     else:
                         status = "I don't see that item."
                 else:
@@ -251,7 +251,7 @@ class Game(Frame):
             else:
                 status = "Invalid command."
 
-        status += f"\nInventory: {str(Game.inventory)}"
+        status += f"\nInventory: {list(Game.inventory.keys())}"
         self.setStatus(status)
         self.player_input.delete(0, END)
 
