@@ -4,6 +4,7 @@
 # Description: This program is a text-based adventure game. The player can move between rooms,
 ###########################################################################################
 from tkinter import * 
+from random import randint
 
 # Define the Room class
 class Room:
@@ -126,7 +127,7 @@ class Game(Frame):
         r2 = Room("Room 2", "room2.gif")
         r3 = Room("Room 3", "room3.gif")
         r4 = Room("Room 4", "room4.gif")
-        r5 = Room("Boss Arena", "Mr_Bowman.png")
+        r5 = Room("Boss Arena", "FinalBoss.png")
 
         # Add exits to each room
         r1.addExit("east", r2)
@@ -187,9 +188,14 @@ class Game(Frame):
         text_frame.pack_propagate(False)
 
 
-    def setRoomImage(self):
+    def setRoomImage(self, deathScreen = 'alive'):
         if Game.currentRoom is None:
-            img = PhotoImage(file="skull.gif")
+            if deathScreen == 'dice':
+                img = PhotoImage(file="skull.gif")
+            elif deathScreen == "goku": 
+                img = PhotoImage(file="TakeTheL.gif")
+            else:
+                img = PhotoImage(file="skull.gif")
         else:
             # img = PhotoImage(file="skull.gif")
             img = PhotoImage(file=Game.currentRoom.image)
@@ -218,10 +224,13 @@ class Game(Frame):
         if len(words) > 0:
             if words[0] == "go":
                 if len(words) > 1:
+                    roll = randint(1, 20)
                     Game.currentRoom = Game.currentRoom.exits[words[1]]
-                    self.setRoomImage()
                     status = str(Game.currentRoom)
-
+                    if roll == 1:
+                        Game.currentRoom = None
+                        status = "You rolled a nat 1, so you tripped and died lol."
+                    self.setRoomImage()
                 else:
                     status = "Go where?"
             elif words[0] == "look":
