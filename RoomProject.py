@@ -126,7 +126,7 @@ class Game(Frame):
         r2 = Room("Room 2", "room2.gif")
         r3 = Room("Room 3", "room3.gif")
         r4 = Room("Room 4", "room4.gif")
-        r5 = Room("Boss Arena", "")
+        r5 = Room("Boss Arena", "Mr_Bowman.png")
 
         # Add exits to each room
         r1.addExit("east", r2)
