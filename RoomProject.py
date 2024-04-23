@@ -4,6 +4,7 @@
 # Description: This program is a text-based adventure game. The player can move between rooms,
 ###########################################################################################
 from tkinter import * 
+import random
 
 # Define the Room class
 class Room:
@@ -96,6 +97,67 @@ class Room:
             s += exit + " "
         return s
 
+class Person:
+    def __init__(self, name, health, damage):
+        self._name = name
+        self._health = health
+        self._damage = damage
+
+    @property
+    def name(self):
+        return self._name
+    @name.setter
+    def name(self, name):
+        self._name = name
+    @property
+    def health(self):
+        return self._health
+    @health.setter
+    def health(self, health):
+        self._health = health
+    @property
+    def damage(self):
+        return self._damage
+    @damage.setter
+    def damage(self, damage):
+        self._damage = damage
+
+    def attack(self, other_person):
+        if "bad-code_snippet" in Game.inventory:
+            other_person.receive_damage(self._damage)
+        else:
+            print("You need a bad-code_snippet to attack!")
+
+    def block(self):
+        blocked_damage = random.randint(0, self._damage)
+        print(f"{self._name} blocked {blocked_damage} damage.")
+        return blocked_damage
+
+    def receive_damage(self, damage):
+        self._health -= damage
+        if self._health < 0:
+            self._health = 0
+            print(f"{self._name} has been defeated.")
+
+    def random_action(self, other_person):
+        if random.choice(['attack', 'block']) == 'attack':
+            self.attack(other_person)
+        else:
+            self.block()
+
+class Boss(Person):
+    def __init__(self, name, health, damage):
+        super().__init__(name, health, damage)
+
+    def random_action(self, other_person):
+        action = random.choice(['attack', 'block'])
+        if action == 'attack':
+            print(f"{self._name} attacks!")
+            self.attack(other_person)
+        else:
+            print(f"{self._name} blocks!")
+            self.block()
+
 # Define the Game class
 class Game(Frame):
     WIDTH = 800
@@ -126,7 +188,7 @@ class Game(Frame):
         r2 = Room("Room 2", "room2.gif")
         r3 = Room("Room 3", "room3.gif")
         r4 = Room("Room 4", "room4.gif")
-        r5 = Room("Boss Arena", "Mr_Bowman.png")
+        r5 = Room("Boss Arena", "FinalBoss.png")
 
         # Add exits to each room
         r1.addExit("east", r2)
@@ -214,6 +276,8 @@ class Game(Frame):
         words = action.split()
 
         status = ""
+
+        
 
         if len(words) > 0:
             if words[0] == "go":
