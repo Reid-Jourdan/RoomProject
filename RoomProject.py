@@ -96,9 +96,6 @@ class Room:
         for exit in self.exits.keys():
             s += exit + " "
         return s
-    
-    def __int__(self):
-        return int(self.name[-1])
 
 class Person:
     def __init__(self, name, health, damage):
@@ -332,11 +329,11 @@ class Game(Frame):
                     status = "Take what?"
             elif words[0] == "attack":
                 if len(words) > 1:
-                    if int(Game.currentRoom) == 5:
+                    if int(self.currentRoom.name[-1]) == 5:
                         if words[1] == "dr_bowman":
                             if "gun" in Game.inventory:
-                                value = randint(1,5)
                                 if "code-bullet1" in Game.inventory:
+                                    del Game.inventory["code-bullet1"]
                                     status = "You damaged Dr. Bowman"
                                     self.hitsTaken += 1
                                     if self.hitsTaken == 4:
@@ -344,6 +341,7 @@ class Game(Frame):
                                         Game.currentRoom = None
                                         self.setRoomImage("victory")
                                 elif "code-bullet2" in Game.inventory:
+                                    del Game.inventory["code-bullet2"]
                                     status = "You damaged Dr. Bowman"
                                     self.hitsTaken += 1
                                     if self.hitsTaken == 4:
@@ -351,6 +349,7 @@ class Game(Frame):
                                         Game.currentRoom = None
                                         self.setRoomImage("victory")
                                 elif "code-bullet3" in Game.inventory:
+                                    del Game.inventory["code-bullet3"]
                                     status = "You damaged Dr. Bowman"
                                     self.hitsTaken += 1
                                     if self.hitsTaken == 4:
@@ -358,6 +357,7 @@ class Game(Frame):
                                         Game.currentRoom = None
                                         self.setRoomImage("victory")
                                 elif "code-bullet4" in Game.inventory:
+                                    del Game.inventory["code-bullet4"]
                                     status = "You damaged Dr. Bowman"
                                     self.hitsTaken += 1
                                     if self.hitsTaken == 4:
@@ -365,11 +365,13 @@ class Game(Frame):
                                         Game.currentRoom = None
                                         self.setRoomImage("victory")
                                 else:
-                                    status = "You ran out of bullets"
+                                    status = "You ran out of bullets and Dr. Bowman was able to use 1% of his power and you got evicerated off the face of the planet"
                                     Game.currentRoom = None
                                     self.setRoomImage("goku")
                             else:
-                                status = "You have nothing to attack with, maybe die and try again"
+                                status = "You had nothing to attack with, so you ran in fist ablazing, and croaked. Maybe get a weapon next time!"
+                                Game.currentRoom = None
+                                self.setRoomImage("goku")
                     else:
                         status = "There is nothing in this room to attack"
                 else:
