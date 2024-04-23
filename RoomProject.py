@@ -260,13 +260,12 @@ class Game(Frame):
     def setRoomImage(self, deathScreen = 'alive'):
         if Game.currentRoom is None:
             if deathScreen == 'dice':
-                img = PhotoImage(file="skull.gif")
+                img = PhotoImage(file="dice.png")
             elif deathScreen == "goku": 
                 img = PhotoImage(file="TakeTheL.gif")
             else:
                 img = PhotoImage(file="skull.gif")
         else:
-            # img = PhotoImage(file="skull.gif")
             img = PhotoImage(file=Game.currentRoom.image)
         self.image.config(image=img)
         self.image.image = img
@@ -307,7 +306,7 @@ class Game(Frame):
                     if roll == 1:
                         Game.currentRoom = None
                         status = "You rolled a nat 1, so you tripped and died lol."
-                    self.setRoomImage()
+                    self.setRoomImage('dice')
                 else:
                     status = "Go where?"
             elif words[0] == "look":
