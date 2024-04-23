@@ -191,7 +191,7 @@ class Game(Frame):
         r2 = Room("Room 2", "room2.gif")
         r3 = Room("Room 3", "room3.gif")
         r4 = Room("Room 4", "room4.gif")
-        r5 = Room("Boss Arena", "Mr_Bowman.png")
+        r5 = Room("Room 5", "FinalBoss.png")
 
         # Add exits to each room
         r1.addExit("east", r2)
@@ -282,10 +282,10 @@ class Game(Frame):
         # self.setupGUI()
         self.setRoomImage()
         self.setStatus("")
+        self.hitsTaken = 0
 
     def process(self, event):
         playerHealth = 100
-        bossHealth = 100
 
         if playerHealth == 0:
             self.currentRoom = None
@@ -301,7 +301,7 @@ class Game(Frame):
         if len(words) > 0:
             if words[0] == "go":
                 if len(words) > 1:
-                    roll = randint(1, 20)
+                    roll = randint(2, 20)
                     Game.currentRoom = Game.currentRoom.exits[words[1]]
                     status = str(Game.currentRoom)
                     if roll == 1:
@@ -339,10 +339,11 @@ class Game(Frame):
                             if "gun" in Game.inventory:
                                 if "code-bullet1" or "code-bullet2" or "code-bullet3" or "code-bullet4" in Game.inventory:
                                     status = "You damaged Dr. Bowman"
-                                    bossHealth -= 25
-                                    if bossHealth == 0:
+                                    self.hitsTaken += 1
+                                    if self.hitsTaken == 4:
                                         status = "YOU BEAT THE IMMACUALTE DR. BOWMAN"
-                                        Game.currentRoom = Game.rVictory
+                                        Game.currentRoom = None
+                                        self.setRoomImage("goku")
                             else:
                                 status = "You have nothing to attack with, maybe die and try again"
                     else:
@@ -352,7 +353,7 @@ class Game(Frame):
                 
             elif words[0] == "die":
                 Game.currentRoom = None
-                self.setRoomImage()
+                self.setRoomImage("goku")
 
             else:
                 status = "Invalid command."
