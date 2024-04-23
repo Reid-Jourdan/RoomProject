@@ -1,10 +1,10 @@
 ###########################################################################################
-# Name: Dylan Ronquille	
+# Name: Jay Graham, Reid Jourdan, Nathan Silvernale, Dylan Ronquile
 # Date: 4/29/2024
 # Description: This program is a text-based adventure game. The player can move between rooms,
 ###########################################################################################
 from tkinter import * 
-
+from random import randint
 # Define the Room class
 class Room:
     def __init__(self, name, image):
@@ -95,6 +95,9 @@ class Room:
         for exit in self.exits.keys():
             s += exit + " "
         return s
+    
+    def __int__(self):
+        return int(self.name[-1])
 
 # Define the Game class
 class Game(Frame):
@@ -126,7 +129,8 @@ class Game(Frame):
         r2 = Room("Room 2", "room2.gif")
         r3 = Room("Room 3", "room3.gif")
         r4 = Room("Room 4", "room4.gif")
-        r5 = Room("Boss Arena", "Mr_Bowman.png")
+        r5 = Room("Room 5", "FinalBoss.png")
+        rVictory = Room("The Victory Room", "victory.png")
 
         # Add exits to each room
         r1.addExit("east", r2)
@@ -145,22 +149,27 @@ class Game(Frame):
         # Add items and grabbables to each room
         r1.addGrabbable("key", "has a golden shine")
         r1.addItem("chair", "It is made of wicker and no one is sitting on it.")
-        r1.addItem("table", "It is made of oak. A golden key rests on it. There is a piece of code on it")
-        r1.addGrabbable("bad-code_snippet", "The only weapon that can damage a professional coder")
+        r1.addItem("table", "It is made of oak. A golden key rests on it. There is a piece of code-bullet1 on it")
+        r1.addGrabbable("code-bullet1", "The only weapon that can damage a professional coder")
 
         r2.addItem("rug", "It is nice and Indian. It also needs to be vacuumed.")
         r2.addItem("fireplace", "It is full of ashes.")
+        r2.addGrabbable("gun", "A gun that shoots a particularly weird, code-based bullet")
 
         r3.addGrabbable("book", "its about coding")
-        r3.addItem("bookshelves", "They are empty. Go figure.")
+        r3.addItem("bookshelves", "They are empty. Go figure. There is a code-bullet3, however.")
         r3.addItem("statue", "There is nothing special about it. A shield is leaning against it")
-        r3.addItem("desk", "The statue is resting on it. So is a book.")
+        r3.addItem("desk", "The statue is resting on it. So is a book as well as a code-bullet2")
         r3.addGrabbable("shield", "A shield that allows its wielder to block some shots")
+        r3.addGrabbable("code-bullet2", "The only weapon that can damage a professional coder")
+        r3.addGrabbable("code-bullet3", "The only weapon that can damage a professional coder")
 
-        r4.addGrabbable("6-pack0", "Their coke, i swear")
-        r4.addItem("brew_rig", "Gourd is brewing some sort of oatmeal stout on the brew rig. A 6-pack is resting beside it.")
+        r4.addGrabbable("6-pack0", "Their coke, I swear")
+        r4.addItem("brew_rig", "Gourd is brewing some sort of oatmeal stout on the brew rig. A 6-pack is resting beside it. As well as a code-bullet4")
+        r4.addGrabbable("code-bullet4", "The only weapon that can damage a professional coder")
 
-        r5.addItem("MR. BOWMAN", "The immaculate Computer Science professor that won't let you pass without a fight!")
+
+        r5.addItem("dr_bowman", "The immaculate Computer Science professor that won't let you pass without a fight!")
 
         # Set initial room
         Game.currentRoom = r1
@@ -209,6 +218,12 @@ class Game(Frame):
         self.setStatus("")
 
     def process(self, event):
+        playerHealth = 100
+        bossHealth = 100
+
+        if playerHealth == 0:
+            self.currentRoom = None
+
         action = self.player_input.get()
         action = action.lower()
         words = action.split()
@@ -242,15 +257,35 @@ class Game(Frame):
                         Game.inventory.update({grab : Game.currentRoom.grabbables[grab]})
                         Game.currentRoom.delGrabbable(words[1])
                         status = "Item taken."
-
                     else:
                         status = "I don't see that item."
                 else:
                     status = "Take what?"
+            elif words[0] == "attack":
+                if len(words) > 1:
+                    if int(Game.currentRoom) == 5:
+                        if words[1] == "dr_bowman":
+                            if "gun" in Game.inventory:
+                                if "code-bullet1" or "code-bullet2" or "code-bullet3" or "code-bullet4" in Game.inventory:
+                                    status = "You damaged Dr. Bowman"
+                                    bossHealth -= 25
+                                    if bossHealth == 0:
+                                        status = "YOU BEAT THE IMMACUALTE DR. BOWMAN"
+                                        Game.currentRoom = Game.rVictory
+                            else:
+                                status = "You have nothing to attack with, maybe die and try again"
+                    else:
+                        status = "There is nothing in this room to attack"
+                else:
+                    status = "What do you want to attack?"
+                
+            elif words[0] == "die":
+                Game.currentRoom = None
+                self.setRoomImage()
 
             else:
                 status = "Invalid command."
-
+        
         status += f"\nInventory: {list(Game.inventory.keys())}"
         self.setStatus(status)
         self.player_input.delete(0, END)
