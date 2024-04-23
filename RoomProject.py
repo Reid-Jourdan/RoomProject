@@ -191,7 +191,7 @@ class Game(Frame):
         r2 = Room("Room 2", "room2.gif")
         r3 = Room("Room 3", "room3.gif")
         r4 = Room("Room 4", "room4.gif")
-        r5 = Room("Boss Arena", "Mr_Bowman.png")
+        r5 = Room("Boss Arena", "FinalBoss.png")
 
         # Add exits to each room
         r1.addExit("east", r2)
@@ -260,7 +260,7 @@ class Game(Frame):
     def setRoomImage(self, deathScreen = 'alive'):
         if Game.currentRoom is None:
             if deathScreen == 'dice':
-                img = PhotoImage(file="skull.gif")
+                img = PhotoImage(file="dice.png")
             elif deathScreen == "goku": 
                 img = PhotoImage(file="TakeTheL.gif")
             else:
@@ -307,7 +307,7 @@ class Game(Frame):
                     if roll == 1:
                         Game.currentRoom = None
                         status = "You rolled a nat 1, so you tripped and died lol."
-                    self.setRoomImage()
+                    self.setRoomImage('dice')
                 else:
                     status = "Go where?"
             elif words[0] == "look":
