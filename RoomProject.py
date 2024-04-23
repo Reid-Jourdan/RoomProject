@@ -125,6 +125,12 @@ class Person:
     def damage(self, damage):
         self._damage = damage
 
+    def attack(self, other_person):
+        if "bad-code_snippet" in Game.inventory:
+            other_person.receive_damage(self._damage)
+        else:
+            print("You need a bad-code_snippet to attack!")
+
     def block(self):
         blocked_damage = random.randint(0, self._damage)
         print(f"{self._name} blocked {blocked_damage} damage.")
