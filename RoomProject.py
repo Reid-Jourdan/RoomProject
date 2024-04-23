@@ -219,7 +219,7 @@ class Game(Frame):
         r3.addItem("desk", "The statue is resting on it. So is a book.")
         r3.addGrabbable("shield", "A shield that allows its wielder to block some shots")
 
-        r4.addGrabbable("6-pack0", "Their coke, i swear")
+        r4.addGrabbable("6-pack", "Their coke, i swear")
         r4.addItem("brew_rig", "Gourd is brewing some sort of oatmeal stout on the brew rig. A 6-pack is resting beside it.")
 
         r5.addItem("MR. BOWMAN", "The immaculate Computer Science professor that won't let you pass without a fight!")
@@ -249,7 +249,7 @@ class Game(Frame):
         text_frame.pack_propagate(False)
 
 
-    def setRoomImage(self, deathScreen = 'alive'):
+    def setRoomImage(self, deathScreen = 'goku'):
         if Game.currentRoom is None:
             if deathScreen == 'dice':
                 img = PhotoImage(file="skull.gif")
@@ -319,7 +319,7 @@ class Game(Frame):
                         status = "I don't see that item."
                 else:
                     status = "Take what?"
-
+            
             else:
                 status = "Invalid command."
 
