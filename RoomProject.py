@@ -191,7 +191,7 @@ class Game(Frame):
         r2 = Room("Room 2", "room2.gif")
         r3 = Room("Room 3", "room3.gif")
         r4 = Room("Room 4", "room4.gif")
-        r5 = Room("Boss Arena", "FinalBoss.png")
+        r5 = Room("Room 5", "FinalBoss.png")
 
         # Add exits to each room
         r1.addExit("east", r2)
@@ -263,6 +263,8 @@ class Game(Frame):
                 img = PhotoImage(file="dice.png")
             elif deathScreen == "goku": 
                 img = PhotoImage(file="TakeTheL.gif")
+            elif deathScreen == "victory":
+                img = PhotoImage(file="victory.png")
             else:
                 img = PhotoImage(file="skull.gif")
         else:
@@ -281,11 +283,10 @@ class Game(Frame):
         # self.setupGUI()
         self.setRoomImage()
         self.setStatus("")
+        self.hitsTaken = 0
 
     def process(self, event):
         playerHealth = 100
-        bossHealth = 100
-
         if playerHealth == 0:
             self.currentRoom = None
 
@@ -295,12 +296,10 @@ class Game(Frame):
 
         status = ""
 
-        
-
         if len(words) > 0:
             if words[0] == "go":
                 if len(words) > 1:
-                    roll = randint(1, 20)
+                    roll = randint(2, 20)
                     Game.currentRoom = Game.currentRoom.exits[words[1]]
                     status = str(Game.currentRoom)
                     if roll == 1:
@@ -336,12 +335,39 @@ class Game(Frame):
                     if int(Game.currentRoom) == 5:
                         if words[1] == "dr_bowman":
                             if "gun" in Game.inventory:
-                                if "code-bullet1" or "code-bullet2" or "code-bullet3" or "code-bullet4" in Game.inventory:
+                                value = randint(1,5)
+                                if "code-bullet1" in Game.inventory:
                                     status = "You damaged Dr. Bowman"
-                                    bossHealth -= 25
-                                    if bossHealth == 0:
+                                    self.hitsTaken += 1
+                                    if self.hitsTaken == 4:
                                         status = "YOU BEAT THE IMMACUALTE DR. BOWMAN"
-                                        Game.currentRoom = Game.rVictory
+                                        Game.currentRoom = None
+                                        self.setRoomImage("victory")
+                                elif "code-bullet2" in Game.inventory:
+                                    status = "You damaged Dr. Bowman"
+                                    self.hitsTaken += 1
+                                    if self.hitsTaken == 4:
+                                        status = "YOU BEAT THE IMMACUALTE DR. BOWMAN"
+                                        Game.currentRoom = None
+                                        self.setRoomImage("victory")
+                                elif "code-bullet3" in Game.inventory:
+                                    status = "You damaged Dr. Bowman"
+                                    self.hitsTaken += 1
+                                    if self.hitsTaken == 4:
+                                        status = "YOU BEAT THE IMMACUALTE DR. BOWMAN"
+                                        Game.currentRoom = None
+                                        self.setRoomImage("victory")
+                                elif "code-bullet4" in Game.inventory:
+                                    status = "You damaged Dr. Bowman"
+                                    self.hitsTaken += 1
+                                    if self.hitsTaken == 4:
+                                        status = "YOU BEAT THE IMMACUALTE DR. BOWMAN"
+                                        Game.currentRoom = None
+                                        self.setRoomImage("victory")
+                                else:
+                                    status = "You ran out of bullets"
+                                    Game.currentRoom = None
+                                    self.setRoomImage("goku")
                             else:
                                 status = "You have nothing to attack with, maybe die and try again"
                     else:
