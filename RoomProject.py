@@ -219,7 +219,7 @@ class Game(Frame):
         r3.addGrabbable("code-bullet2", "The only weapon that can damage a professional coder")
         r3.addGrabbable("code-bullet3", "The only weapon that can damage a professional coder")
 
-        r4.addGrabbable("6-pack0", "Their coke, I swear")
+        r4.addGrabbable("6-pack", "Their coke, I swear")
         r4.addItem("brew_rig", "Gourd is brewing some sort of oatmeal stout on the brew rig. A 6-pack is resting beside it. As well as a code-bullet4")
         r4.addGrabbable("code-bullet4", "The only weapon that can damage a professional coder")
 
@@ -251,7 +251,7 @@ class Game(Frame):
         text_frame.pack_propagate(False)
 
 
-    def setRoomImage(self, deathScreen = 'alive'):
+    def setRoomImage(self, deathScreen = 'goku'):
         if Game.currentRoom is None:
             if deathScreen == 'dice':
                 img = PhotoImage(file="skull.gif")
@@ -326,27 +326,6 @@ class Game(Frame):
                         status = "I don't see that item."
                 else:
                     status = "Take what?"
-            elif words[0] == "attack":
-                if len(words) > 1:
-                    if int(Game.currentRoom) == 5:
-                        if words[1] == "dr_bowman":
-                            if "gun" in Game.inventory:
-                                if "code-bullet1" or "code-bullet2" or "code-bullet3" or "code-bullet4" in Game.inventory:
-                                    status = "You damaged Dr. Bowman"
-                                    bossHealth -= 25
-                                    if bossHealth == 0:
-                                        status = "YOU BEAT THE IMMACUALTE DR. BOWMAN"
-                                        Game.currentRoom = Game.rVictory
-                            else:
-                                status = "You have nothing to attack with, maybe die and try again"
-                    else:
-                        status = "There is nothing in this room to attack"
-                else:
-                    status = "What do you want to attack?"
-                
-            elif words[0] == "die":
-                Game.currentRoom = None
-                self.setRoomImage()
 
             else:
                 status = "Invalid command."
