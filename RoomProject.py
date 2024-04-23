@@ -266,7 +266,6 @@ class Game(Frame):
             else:
                 img = PhotoImage(file="skull.gif")
         else:
-            # img = PhotoImage(file="skull.gif")
             img = PhotoImage(file=Game.currentRoom.image)
         self.image.config(image=img)
         self.image.image = img
