@@ -96,9 +96,6 @@ class Room:
         for exit in self.exits.keys():
             s += exit + " "
         return s
-    
-    def __int__(self):
-        return int(self.name[-1])
 
 class Person:
     def __init__(self, name, health, damage):
@@ -187,13 +184,17 @@ class Game(Frame):
 
     def createRooms(self):
         # Create room objects with names and associated images
+        r0 = Room("Room 0", "start.png")
         r1 = Room("Room 1", "room1.gif")
         r2 = Room("Room 2", "room2.gif")
         r3 = Room("Room 3", "room3.gif")
         r4 = Room("Room 4", "room4.gif")
         r5 = Room("Room 5", "FinalBoss.png")
+        r5 = Room("Room 5", "FinalBoss.png")
 
         # Add exits to each room
+        r0.addExit("start", r1)
+
         r1.addExit("east", r2)
         r1.addExit("south", r3)
 
@@ -208,32 +209,32 @@ class Game(Frame):
         r4.addExit("south", r5)  # Boss Exit
 
         # Add items and grabbables to each room
-        r1.addGrabbable("key", "has a golden shine")
+        r1.addGrabbable("key", "The key has a golden shine.")
         r1.addItem("chair", "It is made of wicker and no one is sitting on it.")
-        r1.addItem("table", "It is made of oak. A golden key rests on it. There is a piece of code-bullet1 on it")
-        r1.addGrabbable("code-bullet1", "The only weapon that can damage a professional coder")
+        r1.addItem("table", "It is made of oak. A golden key rests on it.\nThere is a piece of code-bullet1 on it.")
+        r1.addGrabbable("code-bullet1", "The only weapon that can damage a professional\ncoder.")
 
-        r2.addItem("rug", "It is nice and Indian. It also needs to be vacuumed.")
+        r2.addItem("rug", "It is nice and Indian. It also needs to be\nvacuumed. There is a gun shaped bulge under the\ncarpet.")
         r2.addItem("fireplace", "It is full of ashes.")
-        r2.addGrabbable("gun", "A gun that shoots a particularly weird, code-based bullet")
+        r2.addGrabbable("gun", "A gun that shoots a particularly weird,\ncode-based bullet.")
 
-        r3.addGrabbable("book", "its about coding")
-        r3.addItem("bookshelves", "They are empty. Go figure. There is a code-bullet3, however.")
-        r3.addItem("statue", "There is nothing special about it. A shield is leaning against it")
-        r3.addItem("desk", "The statue is resting on it. So is a book as well as a code-bullet2")
-        r3.addGrabbable("shield", "A shield that allows its wielder to block some shots")
-        r3.addGrabbable("code-bullet2", "The only weapon that can damage a professional coder")
-        r3.addGrabbable("code-bullet3", "The only weapon that can damage a professional coder")
+        r3.addGrabbable("book", "It\'s about coding.")
+        r3.addItem("bookshelves", "They are empty. Go figure. However, there is a\ncode-bullet3.")
+        r3.addItem("statue", "There is nothing special about it. A shield is\nleaning against it.")
+        r3.addItem("desk", "The statue is resting on it. So is a book as well as a code-bullet2.")
+        r3.addGrabbable("shield", "A shield that looks like it will fall apart if\nanything strikes it.")
+        r3.addGrabbable("code-bullet2", "The only weapon that can damage a professional\ncoder.")
+        r3.addGrabbable("code-bullet3", "The only weapon that can damage a professional\ncoder.")
 
-        r4.addGrabbable("6-pack0", "Their coke, I swear")
-        r4.addItem("brew_rig", "Gourd is brewing some sort of oatmeal stout on the brew rig. A 6-pack is resting beside it. As well as a code-bullet4")
-        r4.addGrabbable("code-bullet4", "The only weapon that can damage a professional coder")
+        r4.addGrabbable("6-pack", "It's coke, I swear.")
+        r4.addItem("brew_rig", "Gourd is brewing some sort of oatmeal stout on\nthe brew rig. A 6-pack is resting beside it. As\nwell as a code-bullet4.")
+        r4.addGrabbable("code-bullet4", "The only weapon that can damage a professional\ncoder.")
 
 
-        r5.addItem("dr_bowman", "The immaculate Computer Science professor that won't let you pass without a fight!")
+        r5.addItem("dr_bowman", "The immaculate Computer Science professor that\nwon't let you pass without a fight!")
 
         # Set initial room
-        Game.currentRoom = r1
+        Game.currentRoom = r0
 
         # Initialize player's inventory
         Game.inventory = {}
@@ -263,6 +264,10 @@ class Game(Frame):
                 img = PhotoImage(file="dice.png")
             elif deathScreen == "goku": 
                 img = PhotoImage(file="TakeTheL.gif")
+            elif deathScreen == "victory":
+                img = PhotoImage(file="victory.png")
+            elif deathScreen == "easter":
+                img = PhotoImage(file="easter.png")
             else:
                 img = PhotoImage(file="skull.gif")
         else:
@@ -278,13 +283,18 @@ class Game(Frame):
 
     def play(self):
         self.createRooms()
-        # self.setupGUI()
+        self.setRoomImage()
+        self.setStatus("Welcome to a room Adventure! You have to explore to defeat a boss at the end of the dungeon! Type \"start\" to start the room adventure!\nProvided actions are:\n\'go\' - allows you to travel between rooms using\ncardinal directions\n\'look\' - allows you to look around the room, at\nitems in the room, and at items in your inventory\n\'take\' - allows you to grab that you see when\nlooking\n\'attack\' - allows you to attack an enemy.\nThere is a one in 20 chance of dying when moving from room to room, so beware!")
+        self.hitsTaken = 0
+
+    def start(self):
+        Game.currentRoom = Game.currentRoom.exits["start"]
         self.setRoomImage()
         self.setStatus("")
-        self.hitsTaken = 0
 
     def process(self, event):
         playerHealth = 100
+        bossHealth = 100
 
         if playerHealth == 0:
             self.currentRoom = None
@@ -295,12 +305,14 @@ class Game(Frame):
 
         status = ""
 
-        
-
         if len(words) > 0:
-            if words[0] == "go":
+            if words[0] == "start":
+                self.start()
+                status = str(Game.currentRoom)
+
+            elif words[0] == "go":
                 if len(words) > 1:
-                    roll = randint(2, 20)
+                    roll = randint(1, 20)
                     Game.currentRoom = Game.currentRoom.exits[words[1]]
                     status = str(Game.currentRoom)
                     if roll == 1:
@@ -333,18 +345,49 @@ class Game(Frame):
                     status = "Take what?"
             elif words[0] == "attack":
                 if len(words) > 1:
-                    if int(Game.currentRoom) == 5:
+                    if int(self.currentRoom.name[-1]) == 5:
                         if words[1] == "dr_bowman":
                             if "gun" in Game.inventory:
-                                if "code-bullet1" or "code-bullet2" or "code-bullet3" or "code-bullet4" in Game.inventory:
+                                if "code-bullet1" in Game.inventory:
+                                    del Game.inventory["code-bullet1"]
                                     status = "You damaged Dr. Bowman"
                                     self.hitsTaken += 1
                                     if self.hitsTaken == 4:
                                         status = "YOU BEAT THE IMMACUALTE DR. BOWMAN"
                                         Game.currentRoom = None
-                                        self.setRoomImage("goku")
+                                        self.setRoomImage("victory")
+                                elif "code-bullet2" in Game.inventory:
+                                    del Game.inventory["code-bullet2"]
+                                    status = "You damaged Dr. Bowman"
+                                    self.hitsTaken += 1
+                                    if self.hitsTaken == 4:
+                                        status = "YOU BEAT THE IMMACUALTE DR. BOWMAN"
+                                        Game.currentRoom = None
+                                        self.setRoomImage("victory")
+                                elif "code-bullet3" in Game.inventory:
+                                    del Game.inventory["code-bullet3"]
+                                    status = "You damaged Dr. Bowman"
+                                    self.hitsTaken += 1
+                                    if self.hitsTaken == 4:
+                                        status = "YOU BEAT THE IMMACUALTE DR. BOWMAN"
+                                        Game.currentRoom = None
+                                        self.setRoomImage("victory")
+                                elif "code-bullet4" in Game.inventory:
+                                    del Game.inventory["code-bullet4"]
+                                    status = "You damaged Dr. Bowman"
+                                    self.hitsTaken += 1
+                                    if self.hitsTaken == 4:
+                                        status = "YOU BEAT THE IMMACUALTE DR. BOWMAN"
+                                        Game.currentRoom = None
+                                        self.setRoomImage("victory")
+                                else:
+                                    status = "You ran out of bullets and Dr. Bowman was able to use 1% of his power and you got evicerated off\nthe face of the planet"
+                                    Game.currentRoom = None
+                                    self.setRoomImage("goku")
                             else:
-                                status = "You have nothing to attack with, maybe die and try again"
+                                status = "You had nothing to attack with, so you ran in fist ablazing, and croaked. Maybe get a weapon next time!"
+                                Game.currentRoom = None
+                                self.setRoomImage("goku")
                     else:
                         status = "There is nothing in this room to attack"
                 else:
@@ -352,7 +395,7 @@ class Game(Frame):
                 
             elif words[0] == "die":
                 Game.currentRoom = None
-                self.setRoomImage("goku")
+                self.setRoomImage()
 
             else:
                 status = "Invalid command."
