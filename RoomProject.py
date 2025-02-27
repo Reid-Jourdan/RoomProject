@@ -395,7 +395,7 @@ class Game(Frame):
                 
             elif words[0] == "die":
                 Game.currentRoom = None
-                self.setRoomImage()
+                self.setRoomImage("easter")
 
             else:
                 status = "Invalid command."
